@@ -122,9 +122,10 @@ class Network(object):
 
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
-        for b, w in zip(self.biases, self.weights):
+        for i, (b, w) in enumerate(zip(self.biases, self.weights)):
             a = sigmoid(np.dot(w, a)+b)
-        return a
+        """Apply our 'dirty' softmax function to the final output ... cannot apply to final layer without adjusting training """
+        return dsoftmax(a)
 
     def SGD(self, training_data, epochs, mini_batch_size, eta,
             lmbda = 0.0,
@@ -196,7 +197,7 @@ class Network(object):
             if monitor_evaluation_accuracy:
                 accuracy = self.accuracy(evaluation_data)
                 evaluation_accuracy.append(accuracy)
-                print("Accuracy on evaluation data: {} / {}".format(self.accuracy(evaluation_data), n_data))
+                print("Accuracy on evaluation data: {} / {}".format(accuracy, n_data))
 
             # Early stopping:
             if early_stopping_n > 0:
@@ -354,6 +355,16 @@ def vectorized_result(j):
 def sigmoid(z):
     """The sigmoid function."""
     return 1.0/(1.0+np.exp(-z))
+
+def dsoftmax(z):
+    """The 'dirty' softmax function that lets us turn our sigmoid output into a corresponding confidence value."""
+    oldzs = list(np.reshape(z,(1,10)))
+    print(oldzs)
+    sumz = np.sum(oldzs)
+    newzs = np.reshape([zi/sumz for zi in oldzs], (10, 1))
+    print(newzs)
+    print(np.sum(newzs))
+    return newzs
 
 def sigmoid_prime(z):
     """Derivative of the sigmoid function."""
