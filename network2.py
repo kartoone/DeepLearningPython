@@ -154,6 +154,7 @@ class Network(object):
         are empty if the corresponding flag is not set.
 
         """
+        epoch_weights = [self.weights]        
 
         # early stopping functionality:
         best_accuracy=1
@@ -181,6 +182,9 @@ class Network(object):
                     mini_batch, eta, lmbda, len(training_data))
 
             print("Epoch %s training complete" % j)
+
+            print("Appending weights for epoch %s" % j)
+            epoch_weights.append(self.weights)
 
             if monitor_training_cost:
                 cost = self.total_cost(training_data, lmbda)
@@ -213,7 +217,7 @@ class Network(object):
                     return evaluation_cost, evaluation_accuracy, training_cost, training_accuracy
 
         return evaluation_cost, evaluation_accuracy, \
-            training_cost, training_accuracy
+            training_cost, training_accuracy, epoch_weights
 
     def update_mini_batch(self, mini_batch, eta, lmbda, n):
         """Update the network's weights and biases by applying gradient
