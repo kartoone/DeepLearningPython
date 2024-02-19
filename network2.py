@@ -124,8 +124,9 @@ class Network(object):
         """Return the output of the network if ``a`` is input."""
         for i, (b, w) in enumerate(zip(self.biases, self.weights)):
             a = sigmoid(np.dot(w, a)+b)
+        return a
         """Apply our 'dirty' softmax function to the final output ... cannot apply to final layer without adjusting training """
-        return dsoftmax(a)
+        #return dsoftmax(a)
 
     def SGD(self, training_data, epochs, mini_batch_size, eta,
             lmbda = 0.0,
@@ -363,11 +364,11 @@ def sigmoid(z):
 def dsoftmax(z):
     """The 'dirty' softmax function that lets us turn our sigmoid output into a corresponding confidence value."""
     oldzs = list(np.reshape(z,(1,10)))
-    print(oldzs)
+    #print(oldzs)
     sumz = np.sum(oldzs)
     newzs = np.reshape([zi/sumz for zi in oldzs], (10, 1))
-    print(newzs)
-    print(np.sum(newzs))
+    #print(newzs)
+    #print(np.sum(newzs))
     return newzs
 
 def sigmoid_prime(z):
